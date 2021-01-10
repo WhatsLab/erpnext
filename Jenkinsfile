@@ -1,5 +1,8 @@
 pipeline {
     agent { node { label 'jenkins-slave' } }
+    environment {
+        registry = "gcr.io/nana-direct-cloud/erpnext"
+    }
     stages {
         stage('Build image') {
             steps {
@@ -7,7 +10,7 @@ pipeline {
                 withDockerRegistry([ credentialsId: "gcr:nana-registry", url: "https://gcr.io" ]) {
                     script{
                         tag = sh (script: 'cat version', returnStdout: true)
-                        app = docker.build("gcr.io/nana-direct-cloud/erpnext")
+                        app = docker.build("${registry}")
                         app.push("${tag}")
                         app.push('latest')
                     }
